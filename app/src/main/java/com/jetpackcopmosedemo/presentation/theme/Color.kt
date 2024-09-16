@@ -2,10 +2,21 @@ package com.jetpackcopmosedemo.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+object BaseColors {
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+    //region Dark Colors
+    val Black = Color.Black
+    //endregion
+
+    //region Light Colors
+    val White = Color.White
+    //endregion
+
+    //region Common Colors
+    val Red = Color.Red
+    val Pink = Color(0xFFE91E63)
+    val Yellow = Color.Yellow
+    val Orange = Color(0xFFFF5722)
+    val Transparent = Color.Transparent
+    //endregion
+}
