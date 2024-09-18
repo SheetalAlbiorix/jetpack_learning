@@ -2,7 +2,6 @@ package com.jetpackcopmosedemo.presentation.ui.login
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement

@@ -3,7 +3,6 @@ package com.jetpackcopmosedemo.data.network.client
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
 import com.jetpackcopmosedemo.utils.mock.listResponse
 import com.jetpackcopmosedemo.utils.mock.loginCredsRequest
 import com.jetpackcopmosedemo.utils.mock.methodNotSupportedResponse
@@ -16,8 +15,6 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
-import java.io.StringReader
-
 
 
 class MockInterceptor : Interceptor {
@@ -50,10 +47,11 @@ class MockInterceptor : Interceptor {
                     )
                     .build()
             else {
-                val jsonString = unauthenticatedResponse.entries.joinToString(prefix = "{", postfix = "}") {
-                    "\"${it.key}\": \"${it.value}\""
-                }
-                val message = Gson().fromJson<Map<Any,Any>>(jsonString, type)["message"]
+                val jsonString =
+                    unauthenticatedResponse.entries.joinToString(prefix = "{", postfix = "}") {
+                        "\"${it.key}\": \"${it.value}\""
+                    }
+                val message = Gson().fromJson<Map<Any, Any>>(jsonString, type)["message"]
                 return Response.Builder()
                     .request(request)
                     .protocol(Protocol.HTTP_1_1)

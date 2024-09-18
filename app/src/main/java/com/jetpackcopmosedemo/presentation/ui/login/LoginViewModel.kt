@@ -2,9 +2,6 @@ package com.jetpackcopmosedemo.presentation.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
 import com.jetpackcopmosedemo.data.network.client.getRetrofitInstance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +13,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.mockwebserver.MockWebServer
-import java.io.StringReader
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,7 +33,13 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 // Make a request using OkHttp client
                 val baseUrl = mockWebServer.url("https://example.com/api").toString()
                 val request = Request.Builder().url("$baseUrl/login")
-                    .post(mapOf("email" to emailText.value, "password" to passwordText.value).toString().toRequestBody("application/x-www-form-urlencoded".toMediaType())).build()
+                    .post(
+                        mapOf(
+                            "email" to emailText.value,
+                            "password" to passwordText.value
+                        ).toString()
+                            .toRequestBody("application/x-www-form-urlencoded".toMediaType())
+                    ).build()
 
                 // Execute the request
                 val response: Response = getRetrofitInstance().newCall(request).execute()
