@@ -1,5 +1,7 @@
 package com.jetpackcopmosedemo.presentation.common.login_components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -21,14 +23,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun PasswordField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
     label: String = "Password",
-    placeholder: String = "Enter your Password",
     submit: (() -> Unit)
 ) {
 
@@ -38,7 +41,7 @@ fun PasswordField(
         Icon(
             Icons.Outlined.Key,
             contentDescription = "",
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.inversePrimary
         )
     }
     val trailingIcon = @Composable {
@@ -46,41 +49,42 @@ fun PasswordField(
             Icon(
                 if (isPasswordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.inversePrimary
             )
         }
     }
 
-    TextField(value = value,
-        onValueChange = onChange,
-        modifier = modifier,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                this.defaultKeyboardAction(ImeAction.Done)
-                submit()
-            }
-        ),
-        singleLine = true,
-        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        label = {
-            Text(
-                text = label,
-                modifier = modifier,
-                color = MaterialTheme.colorScheme.inversePrimary
-            )
-        },
-        placeholder = {
-            Text(
-                text = placeholder,
-                modifier = modifier,
-                color = MaterialTheme.colorScheme.inversePrimary
-            )
-        }
-    )
+    Column {
+        TextField(value = value,
+            onValueChange = onChange,
+            modifier = modifier,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    this.defaultKeyboardAction(ImeAction.Done)
+                    submit()
+                }
+            ),
+            singleLine = true,
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            label = {
+                Text(
+                    text = label,
+                    modifier = modifier,
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
+            },
+            isError = isError
+        )
+        Text(
+            text = if (isError) "Please enter valid password" else "",
+            modifier = modifier.padding(start = 16.dp),
+            color = MaterialTheme.colorScheme.inversePrimary
+        )
+    }
 }

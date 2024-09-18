@@ -65,6 +65,13 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.android.coil)
     implementation(libs.material.icons)
+    implementation(libs.hilt.compose)
+    // Mock and HTTP
+    implementation(libs.okhttp3)
+    implementation(libs.mock.http)
+    implementation(libs.gson)
+
+    // Test Libs
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
