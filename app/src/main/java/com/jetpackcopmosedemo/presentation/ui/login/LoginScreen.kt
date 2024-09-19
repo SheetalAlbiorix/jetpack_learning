@@ -5,10 +5,10 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +40,7 @@ fun LoginScreen(
     val context = LocalContext.current
 
     Surface {
-        Column(
+        LazyColumn(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -52,93 +52,99 @@ fun LoginScreen(
                     })
                 }
         ) {
-            LoginField(
-                value = viewModel.emailText.collectAsState().value,
-                label = "Email",
-                onChange = {
-                    viewModel.emailText.value = it
-                    viewModel.isEmailTextError.value = viewModel.emailText.value.isValidEmail()
-                },
-                isError = viewModel.isEmailTextError.collectAsState().value == true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
-            PasswordField(
-                value = viewModel.passwordText.collectAsState().value ?: "",
-                onChange = {
-                    viewModel.passwordText.value = it
-                    viewModel.isPasswordTextError.value =
-                        viewModel.passwordText.value.isValidPassword()
-                },
-                isError = viewModel.isPasswordTextError.collectAsState().value == true,
-                submit = {
-                    if (viewModel.emailText.value.isValidEmail() && viewModel.passwordText.value.isValidPassword()) {
-                        viewModel.isPasswordTextError.value = true
-                        viewModel.isEmailTextError.value = true
-                    } else if (!viewModel.emailText.value.isValidEmail()) {
-                        if (!viewModel.passwordText.value.isValidPassword()) {
-                            viewModel.startMockServer(onSuccess = {
-                                Handler(Looper.getMainLooper()).post {
-                                    navController.navigate(Routes.Home.name) {
-                                        popUpTo(Routes.Auth.name) {
-                                            inclusive = true
+            item {
+                LoginField(
+                    value = viewModel.emailText.collectAsState().value,
+                    label = "Email",
+                    onChange = {
+                        viewModel.emailText.value = it
+                        viewModel.isEmailTextError.value = viewModel.emailText.value.isValidEmail()
+                    },
+                    isError = viewModel.isEmailTextError.collectAsState().value == true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+            }
+            item {
+                PasswordField(
+                    value = viewModel.passwordText.collectAsState().value ?: "",
+                    onChange = {
+                        viewModel.passwordText.value = it
+                        viewModel.isPasswordTextError.value =
+                            viewModel.passwordText.value.isValidPassword()
+                    },
+                    isError = viewModel.isPasswordTextError.collectAsState().value == true,
+                    submit = {
+                        if (viewModel.emailText.value.isValidEmail() && viewModel.passwordText.value.isValidPassword()) {
+                            viewModel.isPasswordTextError.value = true
+                            viewModel.isEmailTextError.value = true
+                        } else if (!viewModel.emailText.value.isValidEmail()) {
+                            if (!viewModel.passwordText.value.isValidPassword()) {
+                                viewModel.startMockServer(onSuccess = {
+                                    Handler(Looper.getMainLooper()).post {
+                                        navController.navigate(Routes.Home.name) {
+                                            popUpTo(Routes.Auth.name) {
+                                                inclusive = true
+                                            }
                                         }
                                     }
-                                }
-                            }, onError = { message ->
-                                Handler(Looper.getMainLooper()).post {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
-                            })
+                                }, onError = { message ->
+                                    Handler(Looper.getMainLooper()).post {
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                            } else {
+                                viewModel.isPasswordTextError.value = true
+                            }
                         } else {
-                            viewModel.isPasswordTextError.value = true
+                            viewModel.isEmailTextError.value = true
                         }
-                    } else {
-                        viewModel.isEmailTextError.value = true
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
-            ElevatedButton(
-                onClick = {
-                    if (viewModel.emailText.value.isValidEmail() && viewModel.passwordText.value.isValidPassword()) {
-                        viewModel.isPasswordTextError.value = true
-                        viewModel.isEmailTextError.value = true
-                    } else if (!viewModel.emailText.value.isValidEmail()) {
-                        if (!viewModel.passwordText.value.isValidPassword()) {
-                            viewModel.startMockServer(onSuccess = {
-                                Handler(Looper.getMainLooper()).post {
-                                    navController.navigate(Routes.Home.name) {
-                                        popUpTo(Routes.Auth.name) {
-                                            inclusive = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+            }
+            item {
+                ElevatedButton(
+                    onClick = {
+                        if (viewModel.emailText.value.isValidEmail() && viewModel.passwordText.value.isValidPassword()) {
+                            viewModel.isPasswordTextError.value = true
+                            viewModel.isEmailTextError.value = true
+                        } else if (!viewModel.emailText.value.isValidEmail()) {
+                            if (!viewModel.passwordText.value.isValidPassword()) {
+                                viewModel.startMockServer(onSuccess = {
+                                    Handler(Looper.getMainLooper()).post {
+                                        navController.navigate(Routes.Home.name) {
+                                            popUpTo(Routes.Auth.name) {
+                                                inclusive = true
+                                            }
                                         }
                                     }
-                                }
-                            }, onError = { message ->
-                                Handler(Looper.getMainLooper()).post {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
-                            })
+                                }, onError = { message ->
+                                    Handler(Looper.getMainLooper()).post {
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                            } else {
+                                viewModel.isPasswordTextError.value = true
+                            }
                         } else {
-                            viewModel.isPasswordTextError.value = true
+                            viewModel.isEmailTextError.value = true
                         }
-                    } else {
-                        viewModel.isEmailTextError.value = true
-                    }
-                },
-                elevation = ButtonDefaults.elevatedButtonElevation(),
-                colors = ButtonDefaults.elevatedButtonColors(
-                    containerColor = BaseColors.Red
-                )
-            ) {
-                Text(
-                    text = "Login",
-                    modifier = Modifier,
-                    color = MaterialTheme.colorScheme.inversePrimary
-                )
+                    },
+                    elevation = ButtonDefaults.elevatedButtonElevation(),
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = BaseColors.Red
+                    )
+                ) {
+                    Text(
+                        text = "Login",
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.inversePrimary
+                    )
+                }
             }
         }
     }
