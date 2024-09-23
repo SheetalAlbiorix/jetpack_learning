@@ -9,6 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import okhttp3.Request
 
 var lastClickTime = 0L
 
@@ -47,4 +50,20 @@ fun Modifier.clickableSingle(
         indication = localIndication,
         interactionSource = interactionSource
     )
+}
+
+fun Request.getRequestBodyAsJson(): Map<Any, Any>? {
+    val buffer = okio.Buffer()
+    this.body?.writeTo(buffer)
+    val type = object : TypeToken<Map<Any, Any>>() {}.type
+    val finalRequest = buffer.readUtf8()
+    return Gson().fromJson<Map<Any, Any>>(finalRequest, type)
+}
+
+fun Map<Any, Any>.getMessageFromMap(): String? {
+    val type = object : TypeToken<Map<Any, Any>>() {}.type
+    val jsonString = entries.joinToString(prefix = "{", postfix = "}") {
+        "\"${it.key}\": \"${it.value}\""
+    }
+    return Gson().fromJson<Map<Any, Any>>(jsonString, type)["message"].toString()
 }

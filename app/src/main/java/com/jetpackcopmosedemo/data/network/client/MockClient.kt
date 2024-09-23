@@ -1,15 +1,16 @@
 package com.jetpackcopmosedemo.data.network.client
 
-import android.util.Log
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.jetpackcopmosedemo.utils.mock.listResponse
+//import retrofit2.Retrofit
+//import retrofit2.converter.gson.GsonConverterFactory
+import com.jetpackcopmosedemo.data.network.model.ApiModel
+import com.jetpackcopmosedemo.utils.getMessageFromMap
+import com.jetpackcopmosedemo.utils.getRequestBodyAsJson
+import com.jetpackcopmosedemo.utils.mock.endPointNotFoundResponse
+import com.jetpackcopmosedemo.utils.mock.loginApiResponse
 import com.jetpackcopmosedemo.utils.mock.loginCredsRequest
 import com.jetpackcopmosedemo.utils.mock.methodNotSupportedResponse
-import com.jetpackcopmosedemo.utils.mock.unauthenticatedResponse
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
@@ -21,45 +22,44 @@ class MockInterceptor : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request: Request = chain.request()
-        val url = request.url.toString()
-        val methodNotSupportedResponse = methodNotSupportedResponse.toString()
+        val url = loginApiResponse[request.url.toString()] as ApiModel?
 
         // Check if the request is to the specific URL
-        if (request.method == "POST" && url == "https://example.com/api/login") {
-            // Create a predefined response for the specific URL
-            val mockResponse = listResponse.toString()
-            Log.e("Login", "intercept: ${request.body.toString()}")
-            val buffer = okio.Buffer()
-            request.body?.writeTo(buffer)
-            val type = object : TypeToken<Map<Any, Any>>() {}.type
-            val finalRequest = buffer.readUtf8()
-            val jsonRequest = Gson().fromJson<Map<Any, Any>>(finalRequest, type)
-            // Return the predefined response
-//            jsonRequest["email"] == "khushpajwani2000@gmail.com" && jsonRequest["password"] == "khushpajwani2000@gmail.com"
-            if (jsonRequest == loginCredsRequest)
+        if (url != null) {
+            if (request.method == url.method) {
+                // Create a predefined response for the specific URL
+                if (request.getRequestBodyAsJson() == loginCredsRequest)
+                    return Response.Builder()
+                        .request(request)
+                        .protocol(Protocol.HTTP_1_1)
+                        .code(200)
+                        .message("Ok")
+                        .body(
+                            url.response.success.getMessageFromMap().toString()
+                                .toResponseBody("application/json".toMediaType())
+                        )
+                        .build()
+                else {
+                    return Response.Builder()
+                        .request(request)
+                        .protocol(Protocol.HTTP_1_1)
+                        .code(401)
+                        .message("Error")
+                        .body(
+                            url.response.error.getMessageFromMap()
+                                ?.toResponseBody("application/json".toMediaType())
+                        )
+                        .build()
+                }
+            } else {
                 return Response.Builder()
                     .request(request)
                     .protocol(Protocol.HTTP_1_1)
-                    .code(200)
-                    .message("Error")
+                    .code(404)
+                    .message("ERROR")
                     .body(
-                        mockResponse.toResponseBody("application/json".toMediaType())
-                    )
-                    .build()
-            else {
-                val jsonString =
-                    unauthenticatedResponse.entries.joinToString(prefix = "{", postfix = "}") {
-                        "\"${it.key}\": \"${it.value}\""
-                    }
-                val message = Gson().fromJson<Map<Any, Any>>(jsonString, type)["message"]
-                return Response.Builder()
-                    .request(request)
-                    .protocol(Protocol.HTTP_1_1)
-                    .code(401)
-                    .message("Error")
-                    .body(
-                        message.toString()
-                            .toResponseBody("application/json".toMediaType())
+                        methodNotSupportedResponse.getMessageFromMap()
+                            ?.toResponseBody("application/json".toMediaType())
                     )
                     .build()
             }
@@ -70,17 +70,23 @@ class MockInterceptor : Interceptor {
                 .code(404)
                 .message("ERROR")
                 .body(
-                    methodNotSupportedResponse.toResponseBody("application/json".toMediaType())
+                    endPointNotFoundResponse.toString()
+                        .toResponseBody("application/json".toMediaType())
                 )
                 .build()
         }
     }
 }
 
-fun getRetrofitInstance(): OkHttpClient {
+/*
+fun getRetrofitInstance(): Retrofit {
     // Create an OkHttpClient and attach the custom MockInterceptor
-
-    return OkHttpClient.Builder()
+    val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(MockInterceptor())
         .build()
-}
+    return Retrofit.Builder()
+        .baseUrl("https://example.com/api/") // Base URL
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+}*/

@@ -1,7 +1,9 @@
-package com.jetpackcopmosedemo.app.android
+package com.jetpackcopmosedemo.app
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class MyApp : Application()
+class MyApp : Application() {
+
+}

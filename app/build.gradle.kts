@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.org.jetbrains.kotlin.kapt)
     alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -66,6 +67,13 @@ dependencies {
     implementation(libs.android.coil)
     implementation(libs.material.icons)
     implementation(libs.hilt.compose)
+
+    // REMOTE
+    api(libs.retrofit2)
+    api(libs.retrofit2.converter.gson)
+    api(libs.retrofit2.adapter.rxjava2)
+    api(libs.http.logging.interceptor)
+
     // Mock and HTTP
     implementation(libs.okhttp3)
     implementation(libs.mock.http)
@@ -84,4 +92,5 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
+//    kapt(libs.kotlinx.metadata.jvm)
 }

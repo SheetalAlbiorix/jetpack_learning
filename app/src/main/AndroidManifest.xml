@@ -5,8 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".app.android.MyApp"
-        android:allowBackup="true"
+        android:name=".app.MyApp"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"

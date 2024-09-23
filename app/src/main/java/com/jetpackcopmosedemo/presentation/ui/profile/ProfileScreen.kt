@@ -21,13 +21,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.jetpackcopmosedemo.presentation.navigation.Routes
 import com.jetpackcopmosedemo.presentation.theme.JetpackComposeDemoTheme
 import com.jetpackcopmosedemo.utils.clickableSingle
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ProfileScreen(
     name: String, navController: NavHostController
@@ -53,7 +51,7 @@ fun ProfileScreen(
                     }),
             ) {
                 Image(
-                    painter = rememberImagePainter(data = "https://picsum.photos/${(index + 1) * 200}/300"),
+                    painter = rememberAsyncImagePainter(model = "https://picsum.photos/${(index + 1) * 200}/300"),
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
