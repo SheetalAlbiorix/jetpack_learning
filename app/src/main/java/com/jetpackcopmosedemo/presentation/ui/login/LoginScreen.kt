@@ -22,7 +22,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.jetpackcopmosedemo.presentation.common.login_components.LoginField
 import com.jetpackcopmosedemo.presentation.common.login_components.PasswordField
@@ -34,7 +34,7 @@ import com.jetpackcopmosedemo.utils.isValidPassword
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val localFocusManager = LocalFocusManager.current
     val context = LocalContext.current

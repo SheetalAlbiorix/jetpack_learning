@@ -1,11 +1,10 @@
 package com.jetpackcopmosedemo.data.datasource
 
-import okhttp3.RequestBody
-import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.http.Body
-import retrofit2.http.GET
+import retrofit2.http.POST
 
 interface ApiService {
-    @GET("login")
-    fun signIn(@Body loginCreds: RequestBody): Response
+    @POST("login")
+    suspend fun signIn(@Body loginCreds: Map<String, String>): ResponseBody
 }

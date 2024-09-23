@@ -1,7 +1,5 @@
 package com.jetpackcopmosedemo.data.network.client
 
-//import retrofit2.Retrofit
-//import retrofit2.converter.gson.GsonConverterFactory
 import com.jetpackcopmosedemo.data.network.model.ApiModel
 import com.jetpackcopmosedemo.utils.getMessageFromMap
 import com.jetpackcopmosedemo.utils.getRequestBodyAsJson

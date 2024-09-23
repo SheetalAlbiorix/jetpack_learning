@@ -1,8 +1,7 @@
 package com.jetpackcopmosedemo.domain.repository.auth
 
-import okhttp3.RequestBody
-import okhttp3.Response
+import okhttp3.ResponseBody
 
 interface AuthRepository {
-    fun signIn(loginCreds: RequestBody): Response
+    suspend fun signIn(loginCreds: Map<String, String>): ResponseBody
 }

@@ -1,5 +1,6 @@
 package com.jetpackcopmosedemo.presentation.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jetpackcopmosedemo.domain.repository.auth.AuthRepository
@@ -7,9 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.mockwebserver.MockWebServer
 import javax.inject.Inject
 
@@ -29,19 +28,19 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Execute the request
-                val response: Response = authRepository.signIn(
+                val response: ResponseBody = authRepository.signIn(
                     mapOf(
-                        "email" to emailText.value,
-                        "password" to passwordText.value
-                    ).toString()
-                        .toRequestBody("application/x-www-form-urlencoded".toMediaType())
+                        "email" to (emailText.value ?: ""),
+                        "password" to (passwordText.value ?: "")
+                    )
                 )
-                if (response.code == 200) {
+                Log.e("TAG", "startMockServer:--------------- ${response}")
+                /*if (response.code == 200) {
                     onSuccess.invoke()
                 } else {
                     val errorMessage = response.body?.string()
                     onError.invoke(errorMessage)
-                }
+                }*/
             } catch (e: Exception) {
                 onError.invoke("Error: ${e.message}")
             }
