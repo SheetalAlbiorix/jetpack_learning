@@ -60,7 +60,7 @@ fun Request.getRequestBodyAsJson(): Map<Any, Any>? {
     return Gson().fromJson<Map<Any, Any>>(finalRequest, type)
 }
 
-fun Map<Any, Any>.getMessageFromMap(): String? {
+fun Map<Any, Any>.getMessageFromMap(): String {
     val type = object : TypeToken<Map<Any, Any>>() {}.type
     val jsonString = entries.joinToString(prefix = "{", postfix = "}") {
         "\"${it.key}\": \"${it.value}\""

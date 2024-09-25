@@ -7,30 +7,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navigation
+import com.jetpackcopmosedemo.R
 import com.jetpackcopmosedemo.presentation.common.bottomBar
 import com.jetpackcopmosedemo.presentation.ui.home.HomeScreen
 import com.jetpackcopmosedemo.presentation.ui.login.LoginScreen
 import com.jetpackcopmosedemo.presentation.ui.profile.EditProfileScreen
 import com.jetpackcopmosedemo.presentation.ui.profile.ProfileDetailsScreen
 import com.jetpackcopmosedemo.presentation.ui.profile.ProfileScreen
+import com.jetpackcopmosedemo.utils.SharedPreferenceHelper
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    Scaffold(
-        bottomBar = { bottomBar(navController) }
-    ) { innerPadding ->
+    Scaffold(bottomBar = { bottomBar(navController) }) { innerPadding ->
+        val context = LocalContext.current
+        val sharedPreferenceHelper = remember {
+            SharedPreferenceHelper(context)
+        }
         NavHost(
             modifier = Modifier.padding(innerPadding),
-            navController = navController, startDestination = Routes.Auth.name
+            navController = navController,
+            startDestination = if (sharedPreferenceHelper.getBoolean(
+                    R.string.isLoggedIn, false
+                )
+            ) Routes.Home.name else Routes.Auth.name
         ) {
             composable(Routes.Home.name) {
-                HomeScreen(navController = navController, name = "Home")
+                HomeScreen(navController = navController)
             }
             navigation(
                 route = Routes.Profile.name,
@@ -79,7 +90,19 @@ fun NavigationGraph(navController: NavHostController) {
                 }, onDismissRequest = {
                     navController.navigateUp()
                 }, confirmButton = {
-                    ElevatedButton(onClick = { navController.navigateUp() }) {
+                    ElevatedButton(onClick = {
+                        navController.navigateUp()
+                        sharedPreferenceHelper.clear()
+                        navController.navigate(Routes.Auth.name) {
+                            navController.graph.findStartDestination().route?.let {
+                                popUpTo(it) {
+                                    saveState = true
+                                }
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }) {
                         Text(
                             text = "Logout",
                             style = MaterialTheme.typography.titleLarge,

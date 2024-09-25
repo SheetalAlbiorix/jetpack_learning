@@ -1,4 +1,4 @@
-package com.jetpackcopmosedemo.presentation.common.login_components
+package com.jetpackcopmosedemo.presentation.ui.login.login_components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

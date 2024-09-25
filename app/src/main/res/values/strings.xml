@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">JetpackComposeDemo</string>
+
+
+    <!--region SharedPreference Keys-->
+    <string name="isLoggedIn">IsLoggedIn</string>
+    <!--endregion-->
 </resources>

@@ -1,6 +1,7 @@
 package com.jetpackcopmosedemo.di
 
 import com.google.gson.GsonBuilder
+import com.google.gson.Strictness
 import com.jetpackcopmosedemo.data.datasource.ApiService
 import com.jetpackcopmosedemo.data.network.client.MockInterceptor
 import dagger.Module
@@ -27,29 +28,23 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(logging: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .addInterceptor(MockInterceptor())
+        return OkHttpClient.Builder().addInterceptor(MockInterceptor())
             .build()
     }
 
     @Provides
     @Singleton
     fun provideConverterFactory(): GsonConverterFactory {
-        return GsonConverterFactory.create(GsonBuilder().create())
+        return GsonConverterFactory.create(GsonBuilder().setStrictness(Strictness.LENIENT).create())
     }
 
     @Provides
     @Singleton
     fun provideRetrofit(
-        converterFactory: GsonConverterFactory,
-        okHttpClient: OkHttpClient
+        converterFactory: GsonConverterFactory, okHttpClient: OkHttpClient
     ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://example.com/api/")
-            .addConverterFactory(converterFactory)
-            .client(okHttpClient)
-            .build()
+        return Retrofit.Builder().baseUrl("https://example.com/api/")
+            .addConverterFactory(converterFactory).client(okHttpClient).build()
     }
 
     @Provides
