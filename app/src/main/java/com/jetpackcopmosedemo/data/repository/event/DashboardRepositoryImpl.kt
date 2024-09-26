@@ -13,4 +13,12 @@ class DashboardRepositoryImpl @Inject constructor(
     override suspend fun getEvent(): Response<Map<String, List<String>>> {
         return apiService.getEvents()
     }
+
+    override suspend fun editEvent(eventName: String): Response<Map<String, String>> {
+        return apiService.editEvents(eventName)
+    }
+
+    override suspend fun deleteEvent(eventId: Int): Response<Map<String, List<String>>> {
+        return apiService.deleteEvents()
+    }
 }

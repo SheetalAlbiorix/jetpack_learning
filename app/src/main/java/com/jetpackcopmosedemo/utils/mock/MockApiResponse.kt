@@ -19,5 +19,21 @@ val mockApisResponses: Map<Any, Any> = mapOf(
                     success = eventsList,
                     error = unauthenticatedResponse
                 )
+            ),
+    "https://example.com/api/deleteEvents" to
+            ApiModel(
+                "DELETE",
+                Response(
+                    success = eventsList,
+                    error = unauthenticatedResponse
+                )
+            ),
+    "https://example.com/api/getEvents" to
+            ApiModel(
+                "GET",
+                Response(
+                    success = eventsList,
+                    error = unauthenticatedResponse
+                )
             )
 )

@@ -41,6 +41,23 @@ class MockInterceptor : Interceptor {
                             )
                             .build()
                         return response
+                    } else if (request.url.toString()
+                            .contains("deleteEvents")
+                    ) {
+                        val list = url.response.success["events"] as List<*>
+                        val mutableList = list.toMutableList()
+                        mutableList.removeAt(0)
+                        val response = Response.Builder()
+                            .request(request)
+                            .protocol(Protocol.HTTP_1_1)
+                            .code(200)
+                            .message("Ok")
+                            .body(
+                                gson.toJson(mapOf("events" to mutableList))
+                                    .toResponseBody("application/json".toMediaType())
+                            )
+                            .build()
+                        return response
                     } else if (!request.url.toString().contains("login")) {
                         val response = Response.Builder()
                             .request(request)

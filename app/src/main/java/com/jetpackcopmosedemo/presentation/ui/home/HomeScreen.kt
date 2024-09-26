@@ -2,6 +2,7 @@ package com.jetpackcopmosedemo.presentation.ui.home
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -40,7 +41,7 @@ fun HomeScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            viewModel.uiStateMockEvents.collectAsState(initial = UiState.Loading).value.let { uiState ->
+            viewModel.uiStateMockListEvents.collectAsState(initial = UiState.Loading).value.let { uiState ->
                 when (uiState) {
                     is UiState.Loading -> {
                         CommonCircularIndicator()
@@ -54,6 +55,9 @@ fun HomeScreen(
                                         .size(width = screenWidth / 4, height = screenHeight / 4)
                                         .padding(16.dp)
                                         .background(MaterialTheme.colorScheme.inversePrimary)
+                                        .clickable(onClick = {
+                                            viewModel.deleteEvents(index)
+                                        })
                                 ) {
                                     Text(
                                         text = "Hello ${uiState.data[index]}!",

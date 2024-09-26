@@ -20,9 +20,9 @@ class HomeViewModel @Inject constructor(
     private val dashboardRepository: DashboardRepository,
 ) : ViewModel() {
 
-    private val _uiStateMockEvents: MutableStateFlow<UiState<MutableList<String>>> =
+    private val _uiStateMockListEvents: MutableStateFlow<UiState<MutableList<String>>> =
         MutableStateFlow(UiState.Loading)
-    val uiStateMockEvents: StateFlow<UiState<MutableList<String>>> = _uiStateMockEvents
+    val uiStateMockListEvents: StateFlow<UiState<MutableList<String>>> = _uiStateMockListEvents
     private val mockWebServer = MockWebServer()
     private val gson = Gson()
 
@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getEvents() {
-        _uiStateMockEvents.value = UiState.Loading
+        _uiStateMockListEvents.value = UiState.Loading
         viewModelScope.launch {
             delay(1000)
             try {
@@ -39,7 +39,7 @@ class HomeViewModel @Inject constructor(
                 val response = dashboardRepository.getEvent()
                 if (response.code() == 200) {
                     response.body()?.get("events")?.let {
-                        _uiStateMockEvents.value = UiState.Success(it.toMutableList())
+                        _uiStateMockListEvents.value = UiState.Success(it.toMutableList())
                     }
                 } else {
                     val type = object : TypeToken<Map<String, String>>() {}.type
@@ -47,10 +47,60 @@ class HomeViewModel @Inject constructor(
                     val errorResponse =
                         gson.fromJson<Map<String, String>>(errorMessage?.string(), type)
                     Log.e("TAG", "startMockServer:--------------- $errorResponse")
-                    _uiStateMockEvents.value = UiState.Error(errorResponse["message"] ?: "")
+                    _uiStateMockListEvents.value = UiState.Error(errorResponse["message"] ?: "")
                 }
             } catch (e: Exception) {
-                _uiStateMockEvents.value = UiState.Error(e.message ?: "")
+                _uiStateMockListEvents.value = UiState.Error(e.message ?: "")
+            }
+        }
+    }
+
+    internal fun deleteEvents(eventIndex: Int) {
+        _uiStateMockListEvents.value = UiState.Loading
+        viewModelScope.launch {
+            delay(1000)
+            try {
+                // Execute the request
+                val response = dashboardRepository.deleteEvent(eventIndex)
+                if (response.code() == 200) {
+                    response.body()?.get("events")?.let {
+                        _uiStateMockListEvents.value = UiState.Success(it.toMutableList())
+                    }
+                } else {
+                    val type = object : TypeToken<Map<String, String>>() {}.type
+                    val errorMessage = response.errorBody()
+                    val errorResponse =
+                        gson.fromJson<Map<String, String>>(errorMessage?.string(), type)
+                    Log.e("TAG", "startMockServer:--------------- $errorResponse")
+                    _uiStateMockListEvents.value = UiState.Error(errorResponse["message"] ?: "")
+                }
+            } catch (e: Exception) {
+                _uiStateMockListEvents.value = UiState.Error(e.message ?: "")
+            }
+        }
+    }
+
+    private fun updateEvents() {
+        _uiStateMockListEvents.value = UiState.Loading
+        viewModelScope.launch {
+            delay(1000)
+            try {
+                // Execute the request
+                val response = dashboardRepository.getEvent()
+                if (response.code() == 200) {
+                    response.body()?.get("events")?.let {
+                        _uiStateMockListEvents.value = UiState.Success(it.toMutableList())
+                    }
+                } else {
+                    val type = object : TypeToken<Map<String, String>>() {}.type
+                    val errorMessage = response.errorBody()
+                    val errorResponse =
+                        gson.fromJson<Map<String, String>>(errorMessage?.string(), type)
+                    Log.e("TAG", "startMockServer:--------------- $errorResponse")
+                    _uiStateMockListEvents.value = UiState.Error(errorResponse["message"] ?: "")
+                }
+            } catch (e: Exception) {
+                _uiStateMockListEvents.value = UiState.Error(e.message ?: "")
             }
         }
     }
