@@ -41,7 +41,7 @@ fun NavigationGraph(navController: NavHostController) {
             ) Routes.Home.name else Routes.Auth.name
         ) {
             composable(Routes.Home.name) {
-                HomeScreen(navController = navController)
+                HomeScreen(navController)
             }
             navigation(
                 route = Routes.Profile.name,

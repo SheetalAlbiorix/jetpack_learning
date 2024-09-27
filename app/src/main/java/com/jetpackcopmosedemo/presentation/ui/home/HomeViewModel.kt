@@ -76,17 +76,18 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _uiStateMockListEvents.value = UiState.Error(e.message ?: "")
+                _uiStateMockListEvents.value = UiState.Loading
             }
         }
     }
 
-    private fun updateEvents() {
+    internal fun updateEvents(eventId: Int) {
         _uiStateMockListEvents.value = UiState.Loading
         viewModelScope.launch {
             delay(1000)
             try {
                 // Execute the request
-                val response = dashboardRepository.getEvent()
+                val response = dashboardRepository.editEvent(eventId, mapOf("eventName" to "Khush"))
                 if (response.code() == 200) {
                     response.body()?.get("events")?.let {
                         _uiStateMockListEvents.value = UiState.Success(it.toMutableList())

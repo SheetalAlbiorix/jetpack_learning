@@ -6,6 +6,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @POST("login")
@@ -14,9 +15,12 @@ interface ApiService {
     @GET("getEvents")
     suspend fun getEvents(): Response<Map<String, List<String>>>
 
-    @PATCH("editEvents")
-    suspend fun editEvents(@Body eventName: String): Response<Map<String, String>>
+    @PATCH("editEvents/{eventId}")
+    suspend fun editEvents(
+        @Path("eventId") eventId: Int,
+        @Body eventName: Map<String, String>
+    ): Response<Map<String, List<String>>>
 
-    @DELETE("deleteEvents")
-    suspend fun deleteEvents(): Response<Map<String, List<String>>>
+    @DELETE("deleteEvents/{eventId}")
+    suspend fun deleteEvents(@Path("eventId") eventId: Int): Response<Map<String, List<String>>>
 }

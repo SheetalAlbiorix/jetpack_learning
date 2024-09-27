@@ -42,22 +42,84 @@ class MockInterceptor : Interceptor {
                             .build()
                         return response
                     } else if (request.url.toString()
-                            .contains("deleteEvents")
+                            .contains("Events")
                     ) {
-                        val list = url.response.success["events"] as List<*>
-                        val mutableList = list.toMutableList()
-                        mutableList.removeAt(0)
-                        val response = Response.Builder()
-                            .request(request)
-                            .protocol(Protocol.HTTP_1_1)
-                            .code(200)
-                            .message("Ok")
-                            .body(
-                                gson.toJson(mapOf("events" to mutableList))
-                                    .toResponseBody("application/json".toMediaType())
-                            )
-                            .build()
-                        return response
+                        when (request.method) {
+                            "GET" -> {
+                                val response = Response.Builder()
+                                    .request(request)
+                                    .protocol(Protocol.HTTP_1_1)
+                                    .code(200)
+                                    .message("Ok")
+                                    .body(
+                                        gson.toJson(url.response.success)
+                                            .toResponseBody("application/json".toMediaType())
+                                    )
+                                    .build()
+                                return response
+                            }
+
+                            "DELETE" -> {
+                                val list = url.response.success["events"] as List<*>
+                                val mutableList = list.toMutableList()
+                                // Get the path segments from the URL
+                                val pathSegments = request.url.encodedPathSegments
+
+                                // Check if the path contains enough segments and extract the specific segment (in this case, '23')
+                                val idSegment: String? =
+                                    if (pathSegments.size >= 2) pathSegments[2] else null
+                                mutableList.removeAt(idSegment?.toInt() ?: 0)
+                                val response = Response.Builder()
+                                    .request(request)
+                                    .protocol(Protocol.HTTP_1_1)
+                                    .code(200)
+                                    .message("Ok")
+                                    .body(
+                                        gson.toJson(mapOf("events" to mutableList))
+                                            .toResponseBody("application/json".toMediaType())
+                                    )
+                                    .build()
+                                return response
+                            }
+
+                            "PATCH" -> {
+                                val list = url.response.success["events"] as List<*>
+                                val mutableList = list.toMutableList()
+                                // Get the path segments from the URL
+                                val pathSegments = request.url.encodedPathSegments
+
+                                // Check if the path contains enough segments and extract the specific segment (in this case, '23')
+                                val idSegment: String? =
+                                    if (pathSegments.size >= 2) pathSegments[2] else null
+                                mutableList[idSegment?.toInt() ?: 0] =
+                                    request.getRequestBodyAsJson()?.get("eventName")
+                                val response = Response.Builder()
+                                    .request(request)
+                                    .protocol(Protocol.HTTP_1_1)
+                                    .code(200)
+                                    .message("Ok")
+                                    .body(
+                                        gson.toJson(mapOf("events" to mutableList))
+                                            .toResponseBody("application/json".toMediaType())
+                                    )
+                                    .build()
+                                return response
+                            }
+
+                            else -> {
+                                val response = Response.Builder()
+                                    .request(request)
+                                    .protocol(Protocol.HTTP_1_1)
+                                    .code(200)
+                                    .message("Ok")
+                                    .body(
+                                        gson.toJson(url.response.success)
+                                            .toResponseBody("application/json".toMediaType())
+                                    )
+                                    .build()
+                                return response
+                            }
+                        }
                     } else if (!request.url.toString().contains("login")) {
                         val response = Response.Builder()
                             .request(request)
@@ -101,7 +163,7 @@ class MockInterceptor : Interceptor {
                     .code(404)
                     .message("ERROR")
                     .body(
-                        endPointNotFoundResponse.toString()
+                        gson.toJson(endPointNotFoundResponse)
                             .toResponseBody("application/json".toMediaType())
                     )
                     .build()
@@ -109,21 +171,9 @@ class MockInterceptor : Interceptor {
         } catch (e: Exception) {
             Log.e("TAG", "interceptor ERROR: ${e.message}")
             return Response.Builder()
+                .protocol(Protocol.HTTP_1_1)
                 .code(500)
                 .body(e.message?.toResponseBody("application/json".toMediaType())).build()
         }
     }
 }
-
-/*
-fun getRetrofitInstance(): Retrofit {
-    // Create an OkHttpClient and attach the custom MockInterceptor
-    val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(MockInterceptor())
-        .build()
-    return Retrofit.Builder()
-        .baseUrl("https://example.com/api/") // Base URL
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-}*/
