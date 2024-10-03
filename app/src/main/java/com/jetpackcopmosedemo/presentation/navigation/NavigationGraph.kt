@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.jetpackcopmosedemo.R
 import com.jetpackcopmosedemo.presentation.common.bottomBar
@@ -40,7 +41,11 @@ fun NavigationGraph(navController: NavHostController) {
                 )
             ) Routes.Home.name else Routes.Auth.name
         ) {
-            composable(Routes.Home.name) {
+            composable(Routes.Home.name, deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "myapp://${Routes.Home.name}"
+                } // Note that this pattern has no relation to the route itself
+            )) {
                 HomeScreen(navController)
             }
             navigation(
@@ -50,7 +55,12 @@ fun NavigationGraph(navController: NavHostController) {
                 composable(Routes.Profile.Profiles.name) {
                     ProfileScreen(navController = navController, name = "Profile")
                 }
-                composable(Routes.Profile.Details.name) {
+                composable(Routes.Profile.Details.name, deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = "myapp://${Routes.Profile.Details.name}"
+                    } // Note that this pattern has no relation to the route itself
+                )
+                ) {
                     val userId = it.arguments?.getString("userId")
                     ProfileDetailsScreen(navController = navController, name = "Details $userId")
                 }

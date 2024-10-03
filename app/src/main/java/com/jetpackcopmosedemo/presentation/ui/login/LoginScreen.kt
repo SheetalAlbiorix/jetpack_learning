@@ -1,5 +1,7 @@
 package com.jetpackcopmosedemo.presentation.ui.login
 
+import android.Manifest
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -16,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +29,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.jetpackcopmosedemo.R
 import com.jetpackcopmosedemo.data.UiState
 import com.jetpackcopmosedemo.presentation.navigation.Routes
@@ -37,6 +43,7 @@ import com.jetpackcopmosedemo.utils.SharedPreferenceHelper
 import com.jetpackcopmosedemo.utils.isValidEmail
 import com.jetpackcopmosedemo.utils.isValidPassword
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController,
@@ -46,6 +53,16 @@ fun LoginScreen(
     val context = LocalContext.current
     val sharedPreferenceHelper = remember {
         SharedPreferenceHelper(context)
+    }
+    val postNotificationPermission =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+        } else null
+
+    LaunchedEffect(key1 = true) {
+        if (postNotificationPermission?.status?.isGranted != true) {
+            postNotificationPermission?.launchPermissionRequest()
+        }
     }
 
     Surface {
@@ -94,7 +111,7 @@ fun LoginScreen(
                                 viewModel.isEmailTextError.value = true
                             } else if (!viewModel.emailText.value.isValidEmail()) {
                                 if (!viewModel.passwordText.value.isValidPassword()) {
-                                    viewModel.signIn()
+                                    viewModel.signIn(context)
                                 } else {
                                     viewModel.isPasswordTextError.value = true
                                 }
@@ -115,7 +132,7 @@ fun LoginScreen(
                                 viewModel.isEmailTextError.value = true
                             } else if (!viewModel.emailText.value.isValidEmail()) {
                                 if (!viewModel.passwordText.value.isValidPassword()) {
-                                    viewModel.signIn()
+                                    viewModel.signIn(context)
                                 } else {
                                     viewModel.isPasswordTextError.value = true
                                 }

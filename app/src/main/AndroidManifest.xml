@@ -4,10 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".app.MyApp"
@@ -29,6 +26,32 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <!--
+                    The scheme and host must match both of the below:
+                    1. The navDeepLink declaration
+                    2. The URI defined in the PendingIntent
+                 -->
+                <data
+                    android:host="home"
+                    android:scheme="myapp" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <!--
+                    The scheme and host must match both of the below:
+                    1. The navDeepLink declaration
+                    2. The URI defined in the PendingIntent
+                 -->
+                <data
+                    android:host="profile.detail"
+                    android:scheme="myapp" />
             </intent-filter>
         </activity>
     </application>

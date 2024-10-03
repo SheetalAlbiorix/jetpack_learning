@@ -68,6 +68,12 @@ dependencies {
     implementation(libs.material.icons)
     implementation(libs.hilt.compose)
 
+    // Permissions
+    implementation(libs.accompanist.permissions)
+
+    // Work manager
+    implementation(libs.androidx.work.runtime.ktx)
+
     // REMOTE
     api(libs.retrofit2)
     api(libs.retrofit2.converter.gson)
